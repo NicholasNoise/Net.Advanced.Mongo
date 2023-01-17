@@ -10,6 +10,8 @@ using FastEndpoints.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Net.Advanced.Mongo.Core.CartAggregate;
 using Serilog;
+using Net.Advanced.Mongo.Web;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,5 +86,21 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1")
 
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
+
+// Seed Database
+using (var scope = app.Services.CreateScope())
+{
+  var services = scope.ServiceProvider;
+
+  try
+  {
+    await SeedData.Initialize(services);
+  }
+  catch (Exception ex)
+  {
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred seeding the DB. {exceptionMessage}", ex.Message);
+  }
+}
 
 app.Run();

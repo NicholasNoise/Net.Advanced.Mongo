@@ -20,4 +20,23 @@ public class Cart : EntityBase, IAggregateRoot
     var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
     base.RegisterDomainEvent(newItemAddedEvent);
   }
+
+  public void ChangeItemQuantity(int productId, uint quantity)
+  {
+    var item = _items.FirstOrDefault(i => i.ProductId == productId);
+    Guard.Against.NotFound(productId, item, nameof(productId));
+    DomainEventBase itemEvent;
+    if (quantity == 0)
+    {
+      _items.Remove(item);
+      itemEvent = new ItemDeletedEvent(this, item);
+    }
+    else
+    {
+      item.Quantity = quantity;
+      itemEvent = new ChangedItemQuantityEvent(this, item);
+    }
+
+    base.RegisterDomainEvent(itemEvent);
+  }
 }
