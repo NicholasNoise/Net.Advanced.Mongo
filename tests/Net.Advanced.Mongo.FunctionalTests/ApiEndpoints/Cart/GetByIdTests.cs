@@ -14,7 +14,7 @@ public class GetByIdTests : BaseWebFixture
   }
 
   [Fact]
-  public async Task ReturnsAllCategories()
+  public async Task ReturnsSeededCart()
   {
     // Arrange.
     string route = GetCartByIdRequest.BuildRoute(SeedData.Cart1.Id);
@@ -25,6 +25,7 @@ public class GetByIdTests : BaseWebFixture
     // Assert.
     Assert.Equal(SeedData.Cart1.Id, result.Id);
     Assert.Equal(SeedData.Cart1.Name, result.Name);
+    Assert.Equal(SeedData.Cart1.Items.Count, result.Items.Count);
   }
 
   [Fact]

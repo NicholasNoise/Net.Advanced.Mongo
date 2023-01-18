@@ -25,7 +25,7 @@ public class CreateItem : EndpointBaseAsync
     Tags = new[] { "CartEndpoints" })
   ]
   public override async Task<ActionResult> HandleAsync(
-    [FromRoute] CreateCartItemRequest request,
+    CreateCartItemRequest request,
     CancellationToken cancellationToken = default)
   {
     if (request.Id is null)

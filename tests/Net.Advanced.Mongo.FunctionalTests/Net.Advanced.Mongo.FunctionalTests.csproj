@@ -28,8 +28,4 @@
     <ProjectReference Include="..\Net.Advanced.Mongo.UnitTests\Net.Advanced.Mongo.UnitTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ApiEndpoints\" />
-  </ItemGroup>
-
 </Project>
