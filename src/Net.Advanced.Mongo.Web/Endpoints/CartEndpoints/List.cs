@@ -8,7 +8,7 @@ public class List : EndpointWithoutRequest<CartListResponse>
 {
   private readonly IRepository<Cart> _repository;
 
-  public const string Route = "/Categories";
+  public const string Route = "/Carts";
 
   public List(IRepository<Cart> repository)
   {

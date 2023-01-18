@@ -25,8 +25,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
   options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-builder.Services.Configure<MongoDatabaseSettings>(
-  builder.Configuration.GetSection("CartDatabaseSettings"));
+builder.Services.AddSingleton(
+  builder.Configuration.GetSection("CartDatabaseSettings").Get<MongoDatabaseSettings>()!);
 
 builder.Services.AddMongo<Cart>();
 
@@ -72,7 +72,11 @@ else
   app.UseHsts();
 }
 app.UseRouting();
-app.UseFastEndpoints();
+app.UseFastEndpoints(c =>
+{
+  c.Versioning.Prefix = "v";
+  c.Versioning.PrependToRoute = true;
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
