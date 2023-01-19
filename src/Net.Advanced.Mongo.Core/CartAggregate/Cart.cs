@@ -6,18 +6,35 @@ using Net.Advanced.Mongo.SharedKernel.Interfaces;
 namespace Net.Advanced.Mongo.Core.CartAggregate;
 public class Cart : EntityBase, IAggregateRoot
 {
-  private readonly List<CartItem> _items = new();
-
   public string? Name { get; set; }
 
-  public IEnumerable<CartItem> Items => _items.AsReadOnly();
+  public ICollection<CartItem> Items { get; set; } = new List<CartItem>();
 
   public void AddItem(CartItem newItem)
   {
     Guard.Against.Null(newItem, nameof(newItem));
-    _items.Add(newItem);
+    Items.Add(newItem);
 
     var newItemAddedEvent = new NewItemAddedEvent(this, newItem);
     base.RegisterDomainEvent(newItemAddedEvent);
+  }
+
+  public void ChangeItemQuantity(int productId, uint quantity)
+  {
+    var item = Items.FirstOrDefault(i => i.ProductId == productId);
+    Guard.Against.NotFound(productId, item, nameof(productId));
+    DomainEventBase itemEvent;
+    if (quantity == 0)
+    {
+      Items.Remove(item);
+      itemEvent = new ItemDeletedEvent(this, item);
+    }
+    else
+    {
+      item.Quantity = quantity;
+      itemEvent = new ChangedItemQuantityEvent(this, item);
+    }
+
+    base.RegisterDomainEvent(itemEvent);
   }
 }

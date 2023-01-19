@@ -10,6 +10,8 @@ using FastEndpoints.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Net.Advanced.Mongo.Core.CartAggregate;
 using Serilog;
+using Net.Advanced.Mongo.Web;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +25,8 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
   options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-builder.Services.Configure<MongoDatabaseSettings>(
-  builder.Configuration.GetSection("CartDatabaseSettings"));
+builder.Services.AddSingleton(
+  builder.Configuration.GetSection("CartDatabaseSettings").Get<MongoDatabaseSettings>()!);
 
 builder.Services.AddMongo<Cart>();
 
@@ -70,7 +72,11 @@ else
   app.UseHsts();
 }
 app.UseRouting();
-app.UseFastEndpoints();
+app.UseFastEndpoints(c =>
+{
+  c.Versioning.Prefix = "v";
+  c.Versioning.PrependToRoute = true;
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -84,5 +90,21 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1")
 
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
+
+// Seed Database
+using (var scope = app.Services.CreateScope())
+{
+  var services = scope.ServiceProvider;
+
+  try
+  {
+    await SeedData.Initialize(services);
+  }
+  catch (Exception ex)
+  {
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred seeding the DB. {exceptionMessage}", ex.Message);
+  }
+}
 
 app.Run();

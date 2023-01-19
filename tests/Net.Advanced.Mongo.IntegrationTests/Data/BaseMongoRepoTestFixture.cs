@@ -14,6 +14,7 @@ public abstract class BaseMongoRepoTestFixture
   protected BaseMongoRepoTestFixture()
   {
     _mongoCollection = CreateNewContextCollection();
+    _mongoCollection.DeleteMany(_ => true);
   }
 
   protected abstract string DbName { get; }

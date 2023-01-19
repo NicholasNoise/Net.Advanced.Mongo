@@ -31,8 +31,4 @@
     <ProjectReference Include="..\Net.Advanced.Mongo.Infrastructure\Net.Advanced.Mongo.Infrastructure.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
-    <Folder Include="Endpoints\" />
-  </ItemGroup>
-  
 </Project>

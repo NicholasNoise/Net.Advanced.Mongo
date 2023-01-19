@@ -16,6 +16,6 @@ public class MongoRepositoryGet : BaseMongoRepoTestFixture
     var newCarts = await repository.ListAsync();
 
     // Assert.
-    Assert.NotEmpty(newCarts);
+    Assert.Empty(newCarts);
   }
 }

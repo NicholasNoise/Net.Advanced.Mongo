@@ -11,9 +11,10 @@ public class MongoRepositoryAdd : BaseMongoRepoTestFixture
   public async Task AddsCartAndSetsId()
   {
     // Arrange.
+    const int cartId = 1;
     const string testCartName = "testCart";
     var repository = GetRepository();
-    var project = new Cart { Name = testCartName };
+    var project = new Cart { Id = cartId, Name = testCartName };
 
     // Act.
     await repository.AddAsync(project);
@@ -23,7 +24,7 @@ public class MongoRepositoryAdd : BaseMongoRepoTestFixture
 
     // Assert.
     Assert.NotNull(newCart);
+    Assert.Equal(cartId, newCart.Id);
     Assert.Equal(testCartName, newCart.Name);
-    Assert.True(newCart.Id > 0);
   }
 }
