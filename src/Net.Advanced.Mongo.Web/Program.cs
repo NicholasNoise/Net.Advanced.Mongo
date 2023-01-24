@@ -9,9 +9,11 @@ using FastEndpoints.Swagger.Swashbuckle;
 using FastEndpoints.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Net.Advanced.Mongo.Core.CartAggregate;
+using Net.Advanced.Mongo.Core.CartAggregate.Handlers;
 using Serilog;
 using Net.Advanced.Mongo.Web;
-using System;
+using RabbitMQ.Client.Core.DependencyInjection;
+using Net.Advanced.Mongo.Infrastructure.RabbitMq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,14 @@ builder.Services.AddSingleton(
   builder.Configuration.GetSection("CartDatabaseSettings").Get<MongoDatabaseSettings>()!);
 
 builder.Services.AddMongo<Cart>();
+
+var rabbitMqSection = builder.Configuration.GetSection("RabbitMq");
+var exchangeSection = builder.Configuration.GetSection("RabbitMqExchange");
+
+builder.Services.AddRabbitMqServices(rabbitMqSection)
+  .AddConsumptionExchange("exchange.name", exchangeSection)
+  .AddMessageHandlerSingleton<EntityChangedMessageHandler>("routing.key")
+  .AddTransient<ProductChangeHandler>();
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 builder.Services.AddRazorPages();
