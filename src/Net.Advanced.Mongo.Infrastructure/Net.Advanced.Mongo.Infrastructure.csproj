@@ -12,6 +12,8 @@
     <PackageReference Include="Autofac" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="MongoDB.Driver" />
+    <PackageReference Include="RabbitMQ.Client" />
+    <PackageReference Include="RabbitMQ.Client.Core.DependencyInjection" />
   </ItemGroup>
   
   <ItemGroup>
